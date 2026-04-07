@@ -101,18 +101,59 @@ class BinaryTree:
 
         return 1 + max(left_height, right_height)
 
-    def pre_order(self, node):
-        if node is not None:
-            print(node.value)
-            self.pre_order(node.left)
-            self.pre_order(node.right)
+def pre_order(self, node):
+    if node is not None:
+        print(node.value)
+        self.pre_order(node.left)
+        self.pre_order(node.right)
 
-    def in_order(self, node):
-        if node is not None:
-            self.in_order(node.left)
-            print(node.value)
-            self.in_order(node.right)
+def in_order(self, node):
+    if node is not None:
+        self.in_order(node.left)
+        print(node.value)
+        self.in_order(node.right)
 
+def print_tree(root):
+    if not root:
+        return
+
+    def height(node):
+        if not node:
+            return 0
+        return 1 + max(height(node.left), height(node.right))
+
+    h = height(root)
+    width = 2 ** h
+    lines = []
+
+    def ensure_line(index):
+        while len(lines) <= index:
+            lines.append([" "] * (width * 2))
+
+    def fill(node, level, pos, gap):
+        if node is None:
+            return
+
+        ensure_line(level)
+
+        val = str(node.value)
+        for i, ch in enumerate(val):
+            lines[level][pos + i] = ch
+
+        if node.left:
+            ensure_line(level + 1)
+            lines[level + 1][pos - gap // 2] = "/"
+            fill(node.left, level + 2, pos - gap, gap // 2)
+
+        if node.right:
+            ensure_line(level + 1)
+            lines[level + 1][pos + gap // 2] = "\\"
+            fill(node.right, level + 2, pos + gap, gap // 2)
+
+    fill(root, 0, width, width // 2)
+
+    for line in lines:
+        print("".join(line).rstrip())
 
 def main():
     option = -1
@@ -125,6 +166,7 @@ def main():
         print("4 - tree height")
         print("5 - show in-order")
         print("6 - show pre-order")
+        print("7 - show tree")
         print("0 - exit")
 
         option = int(input("option: "))
@@ -145,10 +187,13 @@ def main():
             print("Height:", tree.height(tree.root))
 
         elif option == 5:
-            tree.in_order(tree.root)
+            in_order(tree.root)
 
         elif option == 6:
-            tree.pre_order(tree.root)
+            pre_order(tree.root)
+
+        elif option == 7:
+            print_tree(tree.root)
 
 
 main()
