@@ -52,7 +52,7 @@ class BinaryTree:
             print("Element not found")
             return
 
-        # Case 1: two children -> replace with minimum from right subtree
+        # case 1: 2 children -> replace with the rightmost minimum
         if current.left and current.right:
             successor_parent = current
             successor = current.right
