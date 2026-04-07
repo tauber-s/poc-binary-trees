@@ -1,132 +1,154 @@
 """
-        8           L = menor valor
-    L /   \ R       R = maior valor
+        8           L = smaller value
+    L /   \ R       R = greater value
     4       10
            /
           9
 """
+
 class Node:
-    def __init__(self, valor):
-        self.valor = valor
-        self.esquerda = None
-        self.direita = None
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
-class Arvore:
+
+class BinaryTree:
     def __init__(self):
-        self.raiz = None
+        self.root = None
 
-    def inserir(self, dado):
-        novo = Node(dado)
+    def insert(self, data):
+        new_node = Node(data)
 
-        if self.raiz == None:
-            self.raiz = novo
+        if self.root is None:
+            self.root = new_node
             return
-        atual = self.raiz
+
+        current = self.root
         while True:
-            if dado < atual.valor:
-                if atual.esquerda is None:
-                    atual.esquerda = novo
+            if data < current.value:
+                if current.left is None:
+                    current.left = new_node
                     return
-                atual = atual.esquerda
+                current = current.left
             else:
-                if atual.direita is None:
-                    atual.direita = novo
+                if current.right is None:
+                    current.right = new_node
                     return
-                atual = atual.direita
+                current = current.right
 
-    def remover(self, valor):
-        pai = None
-        atual = self.raiz
-        while atual and atual.valor != valor:
-            pai = atual
-            if valor < atual.valor:
-                atual = atual.esquerda
+    def remove(self, value):
+        parent = None
+        current = self.root
+
+        while current and current.value != value:
+            parent = current
+            if value < current.value:
+                current = current.left
             else:
-                atual = atual.direita
-        if not atual:
-            print("elemento não encontrado")
+                current = current.right
+
+        if not current:
+            print("Element not found")
             return
 
-        # caso 1: 2 filhos -> substituir pelo minimo da direita
-        if atual.esquerda and atual.direita:
-            pai_sucessor = atual
-            sucessor = atual.direita
-            while sucessor.esquerda:
-                pai_sucessor = sucessor
-                sucessor = sucessor.esquerda
-            atual.valor = sucessor.valor
-            pai = pai_sucessor
-            atual = sucessor
+        # Case 1: two children -> replace with minimum from right subtree
+        if current.left and current.right:
+            successor_parent = current
+            successor = current.right
 
-        # caso 2: 0 ou 1 filho
-        filho = atual.esquerda or atual.direita
-        if pai is None:
-            self.raiz = filho
-        elif pai.esquerda == atual:
-            pai.esquerda = filho
+            while successor.left:
+                successor_parent = successor
+                successor = successor.left
+
+            current.value = successor.value
+            parent = successor_parent
+            current = successor
+
+        # Case 2: 0 or 1 child
+        child = current.left or current.right
+
+        if parent is None:
+            self.root = child
+        elif parent.left == current:
+            parent.left = child
         else:
-            pai.direita = filho
+            parent.right = child
+
         return True
 
-    def buscar(self, valor):
-        atual = self.raiz
-        while atual:
-            if valor == atual.valor:
-                print("valor encontrado: ", valor)
+    def search(self, value):
+        current = self.root
+
+        while current:
+            if value == current.value:
+                print("Value found:", value)
                 return True
-            if valor < atual.valor:
-                atual = atual.esquerda
+
+            if value < current.value:
+                current = current.left
             else:
-                atual = atual.direita
-        print("valor não encontrado")
+                current = current.right
 
-    def altura(self, no):
-        if no is None:
+        print("Value not found")
+
+    def height(self, node):
+        if node is None:
             return 0
-        altura_esquerda = self.altura(no.esquerda)
-        altura_direita = self.altura(no.direita)
-        return 1 + max(altura_esquerda, altura_direita)
 
-    def pre_ordem(self, no):
-        if no is not None:
-            print(no.valor)
-            self.pre_ordem(no.esquerda)
-            self.pre_ordem(no.direita)
+        left_height = self.height(node.left)
+        right_height = self.height(node.right)
 
-    def em_ordem(self, no):
-        if no is not None:
-            self.em_ordem(no.esquerda)
-            print(no.valor)
-            self.em_ordem(no.direita)
+        return 1 + max(left_height, right_height)
+
+    def pre_order(self, node):
+        if node is not None:
+            print(node.value)
+            self.pre_order(node.left)
+            self.pre_order(node.right)
+
+    def in_order(self, node):
+        if node is not None:
+            self.in_order(node.left)
+            print(node.value)
+            self.in_order(node.right)
+
 
 def main():
-    opcao = -1
-    arv = Arvore()
+    option = -1
+    tree = BinaryTree()
 
-    while opcao != 0:
-        print("1 - inserir elemento")
-        print("2 - excluir elemento")
-        print("3 - buscar elemento")
-        print("4 - altura arvore")
-        print("5 - mostrar em ordem")
-        print("6 - mostrar em pre ordem")
-        print("0 - sair")
-        opcao = int(input("opção: "))
+    while option != 0:
+        print("1 - insert element")
+        print("2 - remove element")
+        print("3 - search element")
+        print("4 - tree height")
+        print("5 - show in-order")
+        print("6 - show pre-order")
+        print("0 - exit")
 
-        if opcao == 1:
-            dado = int(input("digite o valor pra inserir: "))
-            arv.inserir(dado)
-        elif opcao == 2:
-            dado = int(input("digite o valor pra remover: "))
-            arv.remover(dado)
-        elif opcao == 3:
-            dado = int(input("digite o valor pra buscar: "))
-            arv.buscar(dado)
-        elif opcao == 4:
-            print("altura:", arv.altura(arv.raiz))
-        elif opcao == 5:
-            arv.em_ordem(arv.raiz)
-        elif opcao == 6:
-            arv.pre_ordem(arv.raiz)
+        option = int(input("option: "))
+
+        if option == 1:
+            data = int(input("Enter value to insert: "))
+            tree.insert(data)
+
+        elif option == 2:
+            data = int(input("Enter value to remove: "))
+            tree.remove(data)
+
+        elif option == 3:
+            data = int(input("Enter value to search: "))
+            tree.search(data)
+
+        elif option == 4:
+            print("Height:", tree.height(tree.root))
+
+        elif option == 5:
+            tree.in_order(tree.root)
+
+        elif option == 6:
+            tree.pre_order(tree.root)
+
 
 main()
